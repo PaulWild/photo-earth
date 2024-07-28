@@ -85,20 +85,11 @@ function dragged(event: { dx: number; dy: number }) {
 }
 
 function zoomed(event: { sourceEvent: { wheelDelta: number } }) {
+  // @ts-expect-error
   const { transform } = event;
   projection.scale(150 * transform.k);
   // @ts-expect-error
   g.selectAll("path").attr("d", path);
   // @ts-expect-error
   g2.selectAll("path").attr("d", path);
-}
-
-function bind(value: number, min: number, max: number) {
-  if (value < min) {
-    return min;
-  }
-  if (value > max) {
-    return max;
-  }
-  return value;
 }
