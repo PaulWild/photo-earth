@@ -28,7 +28,6 @@ drawHexes();
 //var drag = d3.drag().on("drag", dragged);
 var zoom = d3.zoom().scaleExtent([8, 100]).on("zoom", zoomed);
 
-// @ts-expect-error
 //svg.call(drag);
 // @ts-expect-error
 svg.call(zoom);
