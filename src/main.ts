@@ -26,15 +26,10 @@ const path = d3.geoPath().projection(projection);
 drawMap();
 drawHexes();
 
-var drag = d3.drag().on("drag", dragged);
 var zoom = d3.zoom().scaleExtent([0.4, 8]).on("zoom", zoomed);
 
 // @ts-expect-error
 svg.call(zoom);
-// @ts-expect-error
-g.call(drag);
-// @ts-expect-error
-g2.call(drag);
 
 function drawMap() {
   g.selectAll("path")
@@ -75,26 +70,26 @@ function drawHexes() {
     .attr("height", 1);
 }
 
-function dragged(event: { dx: number; dy: number }) {
-  var dx = event.dx / 50;
-  var dy = event.dy / 50;
+// function dragged(event: { dx: number; dy: number }) {
+//   var dx = event.dx / 50;
+//   var dy = event.dy / 50;
 
-  var currentCenter = projection.center();
-  projection.center([currentCenter[0] - dx, currentCenter[1] + dy]);
-  // @ts-expect-error
-  g.selectAll("path").attr("d", path);
-  // @ts-expect-error
-  g2.selectAll("path").attr("d", path);
-}
+//   var currentCenter = projection.center();
+//   projection.center([currentCenter[0] - dx, currentCenter[1] + dy]);
+//   // @ts-expect-error
+//   g.selectAll("path").attr("d", path);
+//   // @ts-expect-error
+//   g2.selectAll("path").attr("d", path);
+// }
 
-function zoomed(event: { sourceEvent?: any; transform?: any }) {
-  var transform = event.transform;
-  var newScale = 3000 * transform.k;
+// function zoomed(event: { sourceEvent?: any; transform?: any }) {
+//   var transform = event.transform;
+//   var newScale = 3000 * transform.k;
 
-  projection.scale(newScale);
+//   projection.scale(newScale);
 
-  // @ts-expect-error
-  g.selectAll("path").attr("d", path);
-  // @ts-expect-error
-  g2.selectAll("path").attr("d", path);
-}
+//   // @ts-expect-error
+//   g.selectAll("path").attr("d", path);
+//   // @ts-expect-error
+//   g2.selectAll("path").attr("d", path);
+// }
