@@ -83,8 +83,7 @@ function drawHexes() {
 //   g2.selectAll("path").attr("d", path);
 // }
 
-function zoomed(event: { sourceEvent: { wheelDelta: number } }) {
-  // @ts-expect-error
+function zoomed(event: { sourceEvent?: any; transform?: any }) {
   const { transform } = event;
   console.log(event);
   console.log(event.sourceEvent.movementX);
