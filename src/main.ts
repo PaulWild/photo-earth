@@ -6,6 +6,7 @@ import worldMap from "./world-med-res.json" assert { type: "json" };
 
 var width = document.querySelector("svg")!.clientWidth;
 var height = document.querySelector("svg")!.clientHeight;
+
 const svg = d3
   .select("svg")
   .attr("viewBox", `0 0 ${width} ${height}`)
@@ -26,7 +27,7 @@ drawMap();
 drawHexes();
 
 //var drag = d3.drag().on("drag", dragged);
-var zoom = d3.zoom().scaleExtent([8, 100]).on("zoom", zoomed);
+var zoom = d3.zoom().scaleExtent([0.4, 8]).on("zoom", zoomed);
 
 //svg.call(drag);
 // @ts-expect-error
@@ -84,15 +85,17 @@ function drawHexes() {
 // }
 
 function zoomed(event: { sourceEvent?: any; transform?: any }) {
-  const { transform } = event;
-  console.log(event);
-  console.log(event.sourceEvent.movementX);
-  var currentCenter = projection.center();
-  projection.center([
-    currentCenter[0] - event.sourceEvent.movementX / 100,
-    currentCenter[1] + event.sourceEvent.movementY / 100,
-  ]);
-  projection.scale(150 * transform.k);
+  var transform = event.transform;
+  var newScale = 3000 * transform.k;
+  const currentCenter = projection.center();
+
+  projection
+    .scale(newScale)
+    .center([
+      currentCenter[0] - event.sourceEvent.movementX / 50,
+      currentCenter[1] + event.sourceEvent.movementY / 50,
+    ]);
+
   // @ts-expect-error
   g.selectAll("path").attr("d", path);
   // @ts-expect-error
