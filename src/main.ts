@@ -26,7 +26,7 @@ drawMap();
 drawHexes();
 
 var drag = d3.drag().on("drag", dragged);
-var zoom = d3.zoom().on("zoom", zoomed);
+var zoom = d3.zoom().scaleExtent([8, 100]).on("zoom", zoomed);
 
 // @ts-expect-error
 svg.call(drag);
@@ -85,10 +85,8 @@ function dragged(event: { dx: number; dy: number }) {
 }
 
 function zoomed(event: { sourceEvent: { wheelDelta: number } }) {
-  projection.scale(
-    bind(projection.scale() + event.sourceEvent.wheelDelta * 10, 100, 10000)
-  );
-
+  const { transform } = event;
+  projection.scale(150 * transform.k);
   // @ts-expect-error
   g.selectAll("path").attr("d", path);
   // @ts-expect-error
