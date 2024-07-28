@@ -87,14 +87,13 @@ function drawHexes() {
 function zoomed(event: { sourceEvent?: any; transform?: any }) {
   var transform = event.transform;
   var newScale = 3000 * transform.k;
-  const currentCenter = projection.center();
+  //const currentCenter = projection.center();
 
-  projection
-    .scale(newScale)
-    .center([
-      currentCenter[0] - event.sourceEvent.movementX / 50,
-      currentCenter[1] + event.sourceEvent.movementY / 50,
-    ]);
+  projection.scale(newScale);
+  // .center([
+  //   currentCenter[0] - event.sourceEvent.movementX / 50,
+  //   currentCenter[1] + event.sourceEvent.movementY / 50,
+  // ]);
 
   // @ts-expect-error
   g.selectAll("path").attr("d", path);
