@@ -29,7 +29,7 @@ drawHexes();
 var zoom = d3.zoom().scaleExtent([8, 100]).on("zoom", zoomed);
 
 // @ts-expect-error
-svg.call(drag);
+//svg.call(drag);
 // @ts-expect-error
 svg.call(zoom);
 
@@ -87,6 +87,7 @@ function drawHexes() {
 function zoomed(event: { sourceEvent: { wheelDelta: number } }) {
   // @ts-expect-error
   const { transform } = event;
+  console.log(event);
   projection.scale(150 * transform.k);
   // @ts-expect-error
   g.selectAll("path").attr("d", path);
