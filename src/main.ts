@@ -35,7 +35,6 @@ svg.call(zoom);
 
 function drawMap() {
   g.selectAll("path")
-    // @ts-expect-error
     .data(worldMap.features)
     .enter()
     .append("path")
