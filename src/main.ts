@@ -85,3 +85,11 @@ for (let i = 0; i < data.geometries.length; i++) {
   imageLayer.addFilter(mask);
   map.addLayer(imageLayer);
 }
+
+var element = document.getElementsByClassName("map")[0] as HTMLElement;
+
+// Check if the element exists
+if (element) {
+  // Set focus on the element
+  element.focus();
+}
