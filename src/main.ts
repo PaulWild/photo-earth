@@ -21,8 +21,8 @@ import Crop from "ol-ext/filter/Crop";
 const map = new Map({
   target: "map",
   view: new View({
-    center: fromLonLat([-4, 51]),
-    zoom: 5,
+    center: fromLonLat([-2, 51]),
+    zoom: 6,
   }),
   controls: [],
 });
@@ -85,7 +85,7 @@ for (let i = 1; i <= data.geometries.length; i++) {
       url: `https://placedog.net/500/500?id=${i}`, // Replace with the path to your image
       imageExtent: squareExtent,
     }),
-    opacity: 1,
+    opacity: 0.8,
   });
 
   imageLayer.addFilter(mask);
