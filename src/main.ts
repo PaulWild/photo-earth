@@ -31,7 +31,9 @@ map.addLayer(raster);
 let currentZoom = map.getView().getZoom() ?? 0;
 
 const bounds = [
-  { min: 0, max: 4.5, resolution: 2 },
+  { min: 0, max: 2, resolution: 0 },
+  { min: 2, max: 3, resolution: 1 },
+  { min: 3, max: 4.5, resolution: 2 },
   { min: 4.5, max: 7, resolution: 3 },
   { min: 7, max: 8, resolution: 4 },
   { min: 8, max: 9, resolution: 5 },
@@ -41,10 +43,8 @@ const bounds = [
 
 map.getView().on("change:resolution", function () {
   const zoom = map.getView().getZoom() ?? 0;
-  console.log("Zoom level changed to:", zoom);
 
   const bound = bounds.find((bound) => bound.min <= zoom && bound.max > zoom);
-  console.log(bound);
 
   if (!bound) {
     currentZoom = zoom;
