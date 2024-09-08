@@ -21,22 +21,10 @@ const points = [
   [-3.532192554622185, 47.96541061060739],
 ];
 
-const selection = points.map((point) =>
-  h3.latLngToCell(point[1], point[0], RES)
-);
+export const getHexes = (zoomLevel: number) => {
+  const selection = points.map((point) =>
+    h3.latLngToCell(point[1], point[0], zoomLevel)
+  );
 
-let id = 1;
-export const data = {
-  type: "GeometryCollection",
-  geometries: [
-    ...selection
-      .map((polygon) => h3.cellToBoundary(polygon, true))
-      .map((coords) => ({
-        type: "Polygon" as const,
-        coordinates: [coords.reverse()],
-        properties: {
-          id: ++id % 100,
-        },
-      })),
-  ],
+  return selection.map((polygon) => h3.cellToBoundary(polygon, true));
 };
