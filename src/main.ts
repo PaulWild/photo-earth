@@ -1,17 +1,12 @@
-import Layer from "ol/layer/Layer.js";
 import { data } from "./uk";
-import { composeCssTransform } from "ol/transform.js";
 import "./style.css";
 import Stroke from "ol/style/Stroke";
-import ol, { Image } from "ol";
-import Map, { FrameState } from "ol/Map";
+import Map from "ol/Map";
 import View from "ol/View";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
 import Feature from "ol/Feature";
-import Polygon, { fromExtent } from "ol/geom/Polygon";
-import { fromLonLat, toLonLat, transform, transformExtent } from "ol/proj";
-import { Fill, Style } from "ol/style";
+import Polygon from "ol/geom/Polygon";
+import { fromLonLat, transform } from "ol/proj";
+import { Style } from "ol/style";
 import ImageLayer from "ol/layer/Image";
 import { ImageStatic, OSM } from "ol/source";
 import { boundingExtent, getCenter } from "ol/extent";
@@ -32,8 +27,7 @@ const raster = new TileLayer({
 });
 map.addLayer(raster);
 
-for (let i = 1; i <= data.geometries.length; i++) {
-  console.log("hello");
+for (let i = 0; i < data.geometries.length; i++) {
   const hex = data.geometries[i].coordinates[0];
 
   // Convert points to the map's projection
@@ -85,7 +79,7 @@ for (let i = 1; i <= data.geometries.length; i++) {
       url: `https://placedog.net/500/500?id=${i}`, // Replace with the path to your image
       imageExtent: squareExtent,
     }),
-    opacity: 0.8,
+    opacity: 0.7,
   });
 
   imageLayer.addFilter(mask);
