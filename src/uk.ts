@@ -1,6 +1,6 @@
 import * as h3 from "h3-js";
 
-const RES = 3;
+const RES = 4;
 
 const points = [
   [-2.162840525325123, 53.45226016422555],
@@ -25,7 +25,7 @@ const selection = points.map((point) =>
   h3.latLngToCell(point[1], point[0], RES)
 );
 
-let id = 2;
+let id = 1;
 export const data = {
   type: "GeometryCollection",
   geometries: [

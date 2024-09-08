@@ -1,95 +1,93 @@
-import "./style.css";
-import * as d3 from "d3";
-import * as d3Geo from "d3-geo-projection";
+import Layer from "ol/layer/Layer.js";
 import { data } from "./uk";
-import worldMap from "./world-med-res.json" assert { type: "json" };
+import { composeCssTransform } from "ol/transform.js";
+import "./style.css";
+import Stroke from "ol/style/Stroke";
+import ol, { Image } from "ol";
+import Map, { FrameState } from "ol/Map";
+import View from "ol/View";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import Feature from "ol/Feature";
+import Polygon, { fromExtent } from "ol/geom/Polygon";
+import { fromLonLat, toLonLat, transform, transformExtent } from "ol/proj";
+import { Fill, Style } from "ol/style";
+import ImageLayer from "ol/layer/Image";
+import { ImageStatic, OSM } from "ol/source";
+import { boundingExtent, getCenter } from "ol/extent";
+import TileLayer from "ol/layer/Tile";
+import Crop from "ol-ext/filter/Crop";
 
-var width = document.querySelector("svg")!.clientWidth;
-var height = document.querySelector("svg")!.clientHeight;
+const map = new Map({
+  target: "map",
+  view: new View({
+    center: fromLonLat([-4, 51]),
+    zoom: 5,
+  }),
+  controls: [],
+});
 
-const svg = d3
-  .select("svg")
-  .attr("viewBox", `0 0 ${width} ${height}`)
-  .attr("preserveAspectRatio", "xMidYMid meet");
+const raster = new TileLayer({
+  source: new OSM(),
+});
+map.addLayer(raster);
 
-const g = svg.select("svg .map");
-const g2 = svg.select("svg .hex");
+for (let i = 1; i <= data.geometries.length; i++) {
+  console.log("hello");
+  const hex = data.geometries[i].coordinates[0];
 
-const projection = d3Geo
-  .geoCylindricalEqualArea()
-  .fitSize([width, height], worldMap)
-  .scale(3000)
-  .center([-4, 51]);
+  // Convert points to the map's projection
+  const transformedPoints = hex.map((point) =>
+    transform(point, "EPSG:4326", "EPSG:3857")
+  );
 
-const path = d3.geoPath().projection(projection);
+  // Calculate the bounding extent
+  const extent = boundingExtent(transformedPoints);
 
-drawMap();
-drawHexes();
+  // Get the width and height of the extent
+  const width = extent[2] - extent[0];
+  const height = extent[3] - extent[1];
 
-var zoom = d3.zoom().scaleExtent([0.4, 8]).on("zoom", zoomed);
+  // Determine the maximum side length to make the bounding box a square
+  const maxSide = Math.max(height, width);
 
-// @ts-expect-error
-svg.call(zoom);
+  const center = getCenter(extent);
 
-function drawMap() {
-  g.selectAll("path")
-    .data(worldMap.features)
-    .enter()
-    .append("path")
-    // @ts-expect-error
-    .attr("d", path);
+  // Calculate the new extent to make it a square
+  const halfSide = maxSide / 2;
+  const squareExtent = [
+    center[0] - halfSide,
+    center[1] - halfSide,
+    center[0] + halfSide,
+    center[1] + halfSide,
+  ];
+
+  const polygon = new Polygon([transformedPoints]);
+
+  const feature = new Feature(polygon);
+  feature.setStyle(
+    new Style({
+      stroke: new Stroke({
+        color: "#ffffff",
+        width: 1,
+      }),
+    })
+  );
+
+  const mask = new Crop({
+    feature: feature, // The feature to be masked
+    inner: false, // Whether to mask the inside or outside
+  });
+
+  // Create the image layer
+  const imageLayer = new ImageLayer({
+    source: new ImageStatic({
+      url: `https://placedog.net/500/500?id=${i}`, // Replace with the path to your image
+      imageExtent: squareExtent,
+    }),
+    opacity: 1,
+  });
+
+  imageLayer.addFilter(mask);
+  map.addLayer(imageLayer);
 }
-
-function drawHexes() {
-  g2.selectAll("path")
-    .data(data.geometries)
-    .enter()
-    .insert("path")
-    .attr("fill", (d) => `url(#${d.properties.id})`)
-    .attr("d", path);
-
-  g2.selectAll("def")
-    .data(data.geometries)
-    .enter()
-    .append("defs")
-    .append("pattern")
-
-    .attr("id", (d) => d.properties.id)
-    .attr("width", "100%")
-    .attr("height", "100%")
-    .attr("patternUnits", "objectBoundingBox")
-    .attr("patternContentUnits", "objectBoundingBox")
-    .attr("preserveAspectRatio", "xMidYMid slice")
-    .append("image")
-    .attr(
-      "xlink:href",
-      (d) => `https://placedog.net/100/100?id=${d.properties.id}`
-    )
-    .attr("preserveAspectRatio", "xMidYMid slice")
-    .attr("width", 1)
-    .attr("height", 1);
-}
-
-// function dragged(event: { dx: number; dy: number }) {
-//   var dx = event.dx / 50;
-//   var dy = event.dy / 50;
-
-//   var currentCenter = projection.center();
-//   projection.center([currentCenter[0] - dx, currentCenter[1] + dy]);
-//   // @ts-expect-error
-//   g.selectAll("path").attr("d", path);
-//   // @ts-expect-error
-//   g2.selectAll("path").attr("d", path);
-// }
-
-// function zoomed(event: { sourceEvent?: any; transform?: any }) {
-//   var transform = event.transform;
-//   var newScale = 3000 * transform.k;
-
-//   projection.scale(newScale);
-
-//   // @ts-expect-error
-//   g.selectAll("path").attr("d", path);
-//   // @ts-expect-error
-//   g2.selectAll("path").attr("d", path);
-// }
